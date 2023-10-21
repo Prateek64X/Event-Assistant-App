@@ -1,6 +1,12 @@
 # Event Assistant App
 
-A new Flutter project.
+SVVV Event Assistant app is a mobile app for Android, iOS. The app lets students to be aware of Upcoming Events, Join events from the app itself, Follow and explore club events more.
+
+# Contributors
+1. Dhairya Jain
+2. Prateek Panwar
+3. Hariom Yadav
+4. Aman Meena
 
 ## Getting Started
 
