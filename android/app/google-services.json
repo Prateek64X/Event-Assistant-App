@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "88423367260",
+    "project_id": "eventassistantapp",
+    "storage_bucket": "eventassistantapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:88423367260:android:8138a4d5c813bb68b61c99",
+        "android_client_info": {
+          "package_name": "todo.s"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "88423367260-3s6uar1ionhgrat7lhl4tregrh15j13k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2CAwNu6ljxqCe3YZAr6MNHumEiBHQ3fw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "88423367260-3s6uar1ionhgrat7lhl4tregrh15j13k.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "88423367260-9g54l6ndjv1curom3orgoo8f0i8ht8dt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "todo.s"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
