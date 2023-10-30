@@ -1,52 +1,75 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
+
+import '/backend/schema/util/firestore_util.dart';
+import '/backend/schema/util/schema_util.dart';
+
 import 'index.dart';
-import 'serializers.dart';
-import 'package:built_value/built_value.dart';
+import '/flutter_flow/flutter_flow_util.dart';
 
-part 'upcoming_record.g.dart';
+class UpcomingRecord extends FirestoreRecord {
+  UpcomingRecord._(
+    DocumentReference reference,
+    Map<String, dynamic> data,
+  ) : super(reference, data) {
+    _initializeFields();
+  }
 
-abstract class UpcomingRecord
-    implements Built<UpcomingRecord, UpcomingRecordBuilder> {
-  static Serializer<UpcomingRecord> get serializer =>
-      _$upcomingRecordSerializer;
+  // "upcoming_date" field.
+  DateTime? _upcomingDate;
+  DateTime? get upcomingDate => _upcomingDate;
+  bool hasUpcomingDate() => _upcomingDate != null;
 
-  @BuiltValueField(wireName: 'upcoming_date')
-  DateTime? get upcomingDate;
+  // "upcoming_event_name" field.
+  String? _upcomingEventName;
+  String get upcomingEventName => _upcomingEventName ?? '';
+  bool hasUpcomingEventName() => _upcomingEventName != null;
 
-  @BuiltValueField(wireName: 'upcoming_event_name')
-  String? get upcomingEventName;
+  // "upcoming_event_club_name" field.
+  String? _upcomingEventClubName;
+  String get upcomingEventClubName => _upcomingEventClubName ?? '';
+  bool hasUpcomingEventClubName() => _upcomingEventClubName != null;
 
-  @BuiltValueField(wireName: 'upcoming_event_club_name')
-  String? get upcomingEventClubName;
-
-  @BuiltValueField(wireName: kDocumentReferenceField)
-  DocumentReference? get ffRef;
-  DocumentReference get reference => ffRef!;
-
-  static void _initializeBuilder(UpcomingRecordBuilder builder) => builder
-    ..upcomingEventName = ''
-    ..upcomingEventClubName = '';
+  void _initializeFields() {
+    _upcomingDate = snapshotData['upcoming_date'] as DateTime?;
+    _upcomingEventName = snapshotData['upcoming_event_name'] as String?;
+    _upcomingEventClubName =
+        snapshotData['upcoming_event_club_name'] as String?;
+  }
 
   static CollectionReference get collection =>
       FirebaseFirestore.instance.collection('Upcoming');
 
-  static Stream<UpcomingRecord> getDocument(DocumentReference ref) => ref
-      .snapshots()
-      .map((s) => serializers.deserializeWith(serializer, serializedData(s))!);
+  static Stream<UpcomingRecord> getDocument(DocumentReference ref) =>
+      ref.snapshots().map((s) => UpcomingRecord.fromSnapshot(s));
 
-  static Future<UpcomingRecord> getDocumentOnce(DocumentReference ref) => ref
-      .get()
-      .then((s) => serializers.deserializeWith(serializer, serializedData(s))!);
+  static Future<UpcomingRecord> getDocumentOnce(DocumentReference ref) =>
+      ref.get().then((s) => UpcomingRecord.fromSnapshot(s));
 
-  UpcomingRecord._();
-  factory UpcomingRecord([void Function(UpcomingRecordBuilder) updates]) =
-      _$UpcomingRecord;
+  static UpcomingRecord fromSnapshot(DocumentSnapshot snapshot) =>
+      UpcomingRecord._(
+        snapshot.reference,
+        mapFromFirestore(snapshot.data() as Map<String, dynamic>),
+      );
 
   static UpcomingRecord getDocumentFromData(
-          Map<String, dynamic> data, DocumentReference reference) =>
-      serializers.deserializeWith(serializer,
-          {...mapFromFirestore(data), kDocumentReferenceField: reference})!;
+    Map<String, dynamic> data,
+    DocumentReference reference,
+  ) =>
+      UpcomingRecord._(reference, mapFromFirestore(data));
+
+  @override
+  String toString() =>
+      'UpcomingRecord(reference: ${reference.path}, data: $snapshotData)';
+
+  @override
+  int get hashCode => reference.path.hashCode;
+
+  @override
+  bool operator ==(other) =>
+      other is UpcomingRecord &&
+      reference.path.hashCode == other.reference.path.hashCode;
 }
 
 Map<String, dynamic> createUpcomingRecordData({
@@ -54,15 +77,31 @@ Map<String, dynamic> createUpcomingRecordData({
   String? upcomingEventName,
   String? upcomingEventClubName,
 }) {
-  final firestoreData = serializers.toFirestore(
-    UpcomingRecord.serializer,
-    UpcomingRecord(
-      (u) => u
-        ..upcomingDate = upcomingDate
-        ..upcomingEventName = upcomingEventName
-        ..upcomingEventClubName = upcomingEventClubName,
-    ),
+  final firestoreData = mapToFirestore(
+    <String, dynamic>{
+      'upcoming_date': upcomingDate,
+      'upcoming_event_name': upcomingEventName,
+      'upcoming_event_club_name': upcomingEventClubName,
+    }.withoutNulls,
   );
 
   return firestoreData;
+}
+
+class UpcomingRecordDocumentEquality implements Equality<UpcomingRecord> {
+  const UpcomingRecordDocumentEquality();
+
+  @override
+  bool equals(UpcomingRecord? e1, UpcomingRecord? e2) {
+    return e1?.upcomingDate == e2?.upcomingDate &&
+        e1?.upcomingEventName == e2?.upcomingEventName &&
+        e1?.upcomingEventClubName == e2?.upcomingEventClubName;
+  }
+
+  @override
+  int hash(UpcomingRecord? e) => const ListEquality()
+      .hash([e?.upcomingDate, e?.upcomingEventName, e?.upcomingEventClubName]);
+
+  @override
+  bool isValidKey(Object? o) => o is UpcomingRecord;
 }

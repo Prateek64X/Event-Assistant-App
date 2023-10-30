@@ -1,15 +1,10 @@
 import '../backend/backend.dart';
 import '../backend/PinnedEvents.dart';
-import '../backend/schema/event_record.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'home_model.dart';
 export 'home_model.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:intl/intl.dart';
 
 class HomeWidget extends StatefulWidget {
   const HomeWidget({Key? key}) : super(key: key);
@@ -197,10 +192,10 @@ class _HomeWidgetState extends State<HomeWidget> {
                                             setState(() {
                                               if (isPinned) {
                                                 pinnedEventIds.remove(
-                                                    eventRecord.eventId!);
+                                                    eventRecord.eventId);
                                               } else {
                                                 pinnedEventIds
-                                                    .add(eventRecord.eventId!);
+                                                    .add(eventRecord.eventId);
                                               }
                                             });
                                           },

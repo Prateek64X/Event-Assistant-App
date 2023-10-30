@@ -1,11 +1,10 @@
-import '/components/create_task_new_widget.dart';
+import 'package:event_assistant_app/components/create_event_new_widget.dart';
+
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/main.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'empty_list_tasks_model.dart';
 export 'empty_list_tasks_model.dart';
 
@@ -94,7 +93,7 @@ class _EmptyListTasksWidgetState extends State<EmptyListTasksWidget> {
                     padding: MediaQuery.of(bottomSheetContext).viewInsets,
                     child: Container(
                       height: double.infinity,
-                      child: CreateTaskNewWidget(),
+                      child: CreateEventNewWidget(),
                     ),
                   );
                 },

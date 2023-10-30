@@ -7,8 +7,6 @@ import '/main.dart';
 import '/register/register_widget.dart';
 import '/splash_screen/splash_screen_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'login_model.dart';
 export 'login_model.dart';
 

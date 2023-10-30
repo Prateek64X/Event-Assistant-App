@@ -1,18 +1,12 @@
-import 'package:event_assistant_app/components/create_task_new_widget.dart';
+import 'package:event_assistant_app/components/create_event_new_widget.dart';
 
 import '../backend/backend.dart';
-import '../backend/schema/event_record.dart';
 import '../backend/EventsDataLocal.dart';
-import '../components/create_task_edit_widget.dart';
 import '../event_list/event_list_widget.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:intl/intl.dart';
 import 'event_list_model.dart';
 export 'event_list_model.dart';
 
@@ -163,6 +157,7 @@ class _EventListWidgetState extends State<EventListWidget> {
                           width: 76.0, // adjust the width to prevent overflow
                           child: IconButton(
                             onPressed: () async {
+                              // Show Create Event Component
                               await showModalBottomSheet(
                                 isScrollControlled: true,
                                 backgroundColor: Colors.transparent,
@@ -180,7 +175,7 @@ class _EventListWidgetState extends State<EventListWidget> {
                                       padding: MediaQuery.viewInsetsOf(context),
                                       child: Container(
                                         height: double.infinity,
-                                        child: CreateTaskNewWidget(),
+                                        child: CreateEventNewWidget(),
                                       ),
                                     ),
                                   );
@@ -272,7 +267,7 @@ class _EventListWidgetState extends State<EventListWidget> {
                                                   .remove(event.eventId);
                                             } else {
                                               pinnedEventIds
-                                                  .add(event.eventId!);
+                                                  .add(event.eventId);
                                             }
                                           });
                                         },
@@ -291,7 +286,7 @@ class _EventListWidgetState extends State<EventListWidget> {
                                           ],
                                         ),
                                         style: ElevatedButton.styleFrom(
-                                          primary: FlutterFlowTheme.of(context)
+                                          backgroundColor: FlutterFlowTheme.of(context)
                                               .accent1,
                                           shape: RoundedRectangleBorder(
                                             borderRadius:

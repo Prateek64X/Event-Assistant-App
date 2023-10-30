@@ -1,20 +1,20 @@
-import 'package:built_value/serializer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../auth/firebase_auth/auth_util.dart';
 
 import '../flutter_flow/flutter_flow_util.dart';
+import 'schema/util/firestore_util.dart';
 
 import 'schema/user_record.dart';
 import 'schema/club_record.dart';
 import 'schema/event_record.dart';
 import 'schema/upcoming_record.dart';
-import 'schema/serializers.dart';
 
 export 'dart:async' show StreamSubscription;
 export 'package:cloud_firestore/cloud_firestore.dart';
 export 'schema/index.dart';
-export 'schema/serializers.dart';
+export 'schema/util/firestore_util.dart';
+export 'schema/util/schema_util.dart';
 
 export 'schema/user_record.dart';
 export 'schema/club_record.dart';
@@ -39,7 +39,7 @@ Stream<List<UserRecord>> queryUserRecord({
 }) =>
     queryCollection(
       UserRecord.collection,
-      UserRecord.serializer,
+      UserRecord.fromSnapshot,
       queryBuilder: queryBuilder,
       limit: limit,
       singleRecord: singleRecord,
@@ -52,7 +52,7 @@ Future<List<UserRecord>> queryUserRecordOnce({
 }) =>
     queryCollectionOnce(
       UserRecord.collection,
-      UserRecord.serializer,
+      UserRecord.fromSnapshot,
       queryBuilder: queryBuilder,
       limit: limit,
       singleRecord: singleRecord,
@@ -66,7 +66,7 @@ Future<FFFirestorePage<UserRecord>> queryUserRecordPage({
 }) =>
     queryCollectionPage(
       UserRecord.collection,
-      UserRecord.serializer,
+      UserRecord.fromSnapshot, // Use the UserRecord.fromSnapshot function
       queryBuilder: queryBuilder,
       nextPageMarker: nextPageMarker,
       pageSize: pageSize,
@@ -91,7 +91,7 @@ Stream<List<ClubRecord>> queryClubRecord({
 }) =>
     queryCollection(
       ClubRecord.collection,
-      ClubRecord.serializer,
+      ClubRecord.fromSnapshot,
       queryBuilder: queryBuilder,
       limit: limit,
       singleRecord: singleRecord,
@@ -104,7 +104,7 @@ Future<List<ClubRecord>> queryClubRecordOnce({
 }) =>
     queryCollectionOnce(
       ClubRecord.collection,
-      ClubRecord.serializer,
+      ClubRecord.fromSnapshot,
       queryBuilder: queryBuilder,
       limit: limit,
       singleRecord: singleRecord,
@@ -118,12 +118,13 @@ Future<FFFirestorePage<ClubRecord>> queryClubRecordPage({
 }) =>
     queryCollectionPage(
       ClubRecord.collection,
-      ClubRecord.serializer,
+      ClubRecord.fromSnapshot, // Update to use the fromSnapshot constructor
       queryBuilder: queryBuilder,
       nextPageMarker: nextPageMarker,
       pageSize: pageSize,
       isStream: isStream,
     );
+
 
 /// Functions to query EventRecords (as a Stream and as a Future).
 Future<int> queryEventRecordCount({
@@ -143,7 +144,7 @@ Stream<List<EventRecord>> queryEventRecord({
 }) =>
     queryCollection(
       EventRecord.collection,
-      EventRecord.serializer,
+      EventRecord.fromSnapshot,
       queryBuilder: queryBuilder,
       limit: limit,
       singleRecord: singleRecord,
@@ -156,7 +157,7 @@ Future<List<EventRecord>> queryEventRecordOnce({
 }) =>
     queryCollectionOnce(
       EventRecord.collection,
-      EventRecord.serializer,
+      EventRecord.fromSnapshot,
       queryBuilder: queryBuilder,
       limit: limit,
       singleRecord: singleRecord,
@@ -170,7 +171,7 @@ Future<FFFirestorePage<EventRecord>> queryEventRecordPage({
 }) =>
     queryCollectionPage(
       EventRecord.collection,
-      EventRecord.serializer,
+      EventRecord.fromSnapshot,
       queryBuilder: queryBuilder,
       nextPageMarker: nextPageMarker,
       pageSize: pageSize,
@@ -195,7 +196,7 @@ Stream<List<UpcomingRecord>> queryUpcomingRecord({
 }) =>
     queryCollection(
       UpcomingRecord.collection,
-      UpcomingRecord.serializer,
+      UpcomingRecord.fromSnapshot,
       queryBuilder: queryBuilder,
       limit: limit,
       singleRecord: singleRecord,
@@ -208,7 +209,7 @@ Future<List<UpcomingRecord>> queryUpcomingRecordOnce({
 }) =>
     queryCollectionOnce(
       UpcomingRecord.collection,
-      UpcomingRecord.serializer,
+      UpcomingRecord.fromSnapshot,
       queryBuilder: queryBuilder,
       limit: limit,
       singleRecord: singleRecord,
@@ -222,7 +223,7 @@ Future<FFFirestorePage<UpcomingRecord>> queryUpcomingRecordPage({
 }) =>
     queryCollectionPage(
       UpcomingRecord.collection,
-      UpcomingRecord.serializer,
+      UpcomingRecord.fromSnapshot,
       queryBuilder: queryBuilder,
       nextPageMarker: nextPageMarker,
       pageSize: pageSize,
@@ -245,10 +246,13 @@ Future<int> queryCollectionCount(
   }).then((value) => value.count);
 }
 
-Stream<List<T>> queryCollection<T>(Query collection, Serializer<T> serializer,
-    {Query Function(Query)? queryBuilder,
-    int limit = -1,
-    bool singleRecord = false}) {
+Stream<List<T>> queryCollection<T>(
+  Query collection,
+  RecordBuilder<T> recordBuilder, {
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) {
   final builder = queryBuilder ?? (q) => q;
   var query = builder(collection);
   if (limit > 0 || singleRecord) {
@@ -259,7 +263,7 @@ Stream<List<T>> queryCollection<T>(Query collection, Serializer<T> serializer,
   }).map((s) => s.docs
       .map(
         (d) => safeGet(
-          () => serializers.deserializeWith(serializer, serializedData(d)),
+          () => recordBuilder(d),
           (e) => print('Error serializing doc ${d.reference.path}:\n$e'),
         ),
       )
@@ -269,10 +273,12 @@ Stream<List<T>> queryCollection<T>(Query collection, Serializer<T> serializer,
 }
 
 Future<List<T>> queryCollectionOnce<T>(
-    Query collection, Serializer<T> serializer,
-    {Query Function(Query)? queryBuilder,
-    int limit = -1,
-    bool singleRecord = false}) {
+  Query collection,
+  RecordBuilder<T> recordBuilder, {
+  Query Function(Query)? queryBuilder,
+  int limit = -1,
+  bool singleRecord = false,
+}) {
   final builder = queryBuilder ?? (q) => q;
   var query = builder(collection);
   if (limit > 0 || singleRecord) {
@@ -281,7 +287,7 @@ Future<List<T>> queryCollectionOnce<T>(
   return query.get().then((s) => s.docs
       .map(
         (d) => safeGet(
-          () => serializers.deserializeWith(serializer, serializedData(d)),
+          () => recordBuilder(d),
           (e) => print('Error serializing doc ${d.reference.path}:\n$e'),
         ),
       )
@@ -315,7 +321,7 @@ class FFFirestorePage<T> {
 
 Future<FFFirestorePage<T>> queryCollectionPage<T>(
   Query collection,
-  Serializer<T> serializer, {
+  RecordBuilder<T> recordBuilder, {
   Query Function(Query)? queryBuilder,
   DocumentSnapshot? nextPageMarker,
   required int pageSize,
@@ -337,7 +343,7 @@ Future<FFFirestorePage<T>> queryCollectionPage<T>(
   final getDocs = (QuerySnapshot s) => s.docs
       .map(
         (d) => safeGet(
-          () => serializers.deserializeWith(serializer, serializedData(d)),
+          () => recordBuilder(d),
           (e) => print('Error serializing doc ${d.reference.path}:\n$e'),
         ),
       )
@@ -360,15 +366,48 @@ Future maybeCreateUser(User user) async {
   }
 
   final userData = createUserRecordData(
-    email: user.email,
-    displayName: user.displayName,
+    email: user.email ??
+        FirebaseAuth.instance.currentUser?.email ??
+        user.providerData.firstOrNull?.email,
+    displayName:
+        user.displayName ?? FirebaseAuth.instance.currentUser?.displayName,
     photoUrl: user.photoURL,
     uid: user.uid,
+    //displayName: user.displayName ?? FirebaseAuth.instance.currentUser?.displayName,
+    //photoUrl: user.photoURL,
     phoneNumber: user.phoneNumber,
     createdTime: getCurrentTimestamp,
   );
 
   await userRecord.set(userData);
-  currentUserDocument =
-      serializers.deserializeWith(UserRecord.serializer, userData);
+  currentUserDocument = UserRecord.getDocumentFromData(userData, userRecord);
 }
+
+Future updateUserDocument({String? email}) async {
+  await currentUserDocument?.reference
+      .update(createUserRecordData(email: email));
+}
+
+/*Future<Future<DocumentReference<Object?>>> createNewEvent({
+  required String eventName,
+  required String eventDetails,
+  required DateTime eventDateStart,
+  required DateTime eventDateEnd,
+  required String clubName,
+  required String formLink,
+  required String communityLink,
+}) async {
+  final eventRecordData = createEventRecordData(
+    eventName: eventName,
+    eventDescription: eventDetails,
+    eventDateStart: eventDateStart,
+    eventDateEnd: eventDateEnd,
+    clubName: clubName,
+    formLink: formLink,
+    communityLink: communityLink,
+    // Add any other fields that are required for the EventRecord
+  );
+
+  return EventRecord.collection.add(eventRecordData);
+}*/
+
