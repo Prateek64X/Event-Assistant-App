@@ -297,7 +297,7 @@ class _EventListWidgetState extends State<EventListWidget> {
                                                   child: Container(
                                                     height: double.infinity,
                                                     child: JoinEventWidget(
-                                                      eventId: event.reference.path,
+                                                      eventId: event.reference.id,
                                                     ),
                                                   ),
                                                 ),

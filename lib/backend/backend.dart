@@ -125,7 +125,6 @@ Future<FFFirestorePage<ClubRecord>> queryClubRecordPage({
       isStream: isStream,
     );
 
-
 /// Functions to query EventRecords (as a Stream and as a Future).
 Future<int> queryEventRecordCount({
   Query Function(Query)? queryBuilder,
@@ -177,6 +176,33 @@ Future<FFFirestorePage<EventRecord>> queryEventRecordPage({
       pageSize: pageSize,
       isStream: isStream,
     );
+
+// Custom Function to fetch event by event path (Firebase id)
+Stream<List<EventRecord>> queryEventRecordByPath({
+  required String eventPath, // Pass the event reference path as a parameter
+  int limit = -1,
+  bool singleRecord = false,
+}) {
+  final collection = EventRecord.collection;
+  final query = collection.where(FieldPath.documentId, isEqualTo: eventPath);
+
+  if (limit > 0 || singleRecord) {
+    query.limit(singleRecord ? 1 : limit);
+  }
+
+  return query.snapshots().handleError((err) {
+    print('Error querying $collection: $err');
+  }).map((s) => s.docs
+      .map(
+        (d) => safeGet(
+          () => EventRecord.fromSnapshot(d),
+          (e) => print('Error serializing doc ${d.reference.path}:\n$e'),
+        ),
+      )
+      .where((d) => d != null)
+      .map((d) => d!)
+      .toList());
+}
 
 /// Functions to query UpcomingRecords (as a Stream and as a Future).
 Future<int> queryUpcomingRecordCount({
@@ -410,4 +436,3 @@ Future updateUserDocument({String? email}) async {
 
   return EventRecord.collection.add(eventRecordData);
 }*/
-

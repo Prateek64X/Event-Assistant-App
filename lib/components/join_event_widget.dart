@@ -71,9 +71,13 @@ class _JoinEventWidgetState extends State<JoinEventWidget> {
         padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 12),
         child: StreamBuilder<List<EventRecord>>(
           stream: queryEventRecord(
+            queryBuilder: (query) => query.where(FieldPath.documentId, isEqualTo: widget.eventId),
             singleRecord: false,
           ),
           builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            }
             // Customize what your widget looks like when it's loading.
             if (!snapshot.hasData) {
               return Center(
@@ -89,21 +93,11 @@ class _JoinEventWidgetState extends State<JoinEventWidget> {
               );
             }
 
-            List<EventRecord> materialCardEventRecordList = snapshot.data!;
-            if (materialCardEventRecordList.isEmpty) {
-              return Container(); // No events found.
-            }
-            print(
-                "Data of Snapshot Event List:\n ${snapshot.data}"); // Debug print
+            // Fetch Single Event Record By Query
+            EventRecord? materialCardEventRecord = snapshot.data?.isNotEmpty == true ? snapshot.data![0] : null;
 
-            // Getting Single Event
-            EventRecord? materialCardEventRecord;
-            for (var record in materialCardEventRecordList) {
-              if (record.reference.path.contains(widget.eventId.toString()) ==
-                  true) {
-                materialCardEventRecord = record;
-                break;
-              }
+            if (materialCardEventRecord == null) {
+              return Container(); // No event found.
             }
 
             if (materialCardEventRecord == null) {
