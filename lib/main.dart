@@ -1,12 +1,17 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_localizations/flutter_localizations.dart';
+
+import 'package:firebase_core/firebase_core.dart';
 import 'auth/firebase_auth/firebase_user_provider.dart';
 import 'auth/firebase_auth/auth_util.dart';
 
 import 'backend/firebase/firebase_config.dart';
 import 'flutter_flow/flutter_flow_theme.dart';
+import 'flutter_flow/flutter_flow_util.dart';
 import 'flutter_flow/internationalization.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:floating_bottom_navigation_bar/floating_bottom_navigation_bar.dart';
 import 'index.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -43,49 +48,6 @@ class _MyAppState extends State<MyApp> {
 
   //For Events Notifications
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =  FlutterLocalNotificationsPlugin();
-  //Events Data
-  List<Event> events = [
-    Event(
-      event_id: '1',
-      event_name: 'event_1',
-      event_description: 'Description for e1',
-      event_date: DateTime.now(),
-      event_club_name: 'Club A',
-      event_admin_id: 'admin123',
-    ),
-    Event(
-      event_id: '2',
-      event_name: 'event_2',
-      event_description: 'Description for e2',
-      event_date: DateTime.now(),
-      event_club_name: 'Club B',
-      event_admin_id: 'admin456',
-    ),
-    Event(
-      event_id: '3',
-      event_name: 'event_3',
-      event_description: 'Description for e3',
-      event_date: DateTime.now(),
-      event_club_name: 'Club C',
-      event_admin_id: 'admin789',
-    ),
-    Event(
-      event_id: '4',
-      event_name: 'event_4',
-      event_description: 'Description for e4',
-      event_date: DateTime.now(),
-      event_club_name: 'Club D',
-      event_admin_id: 'admin321',
-    ),
-    Event(
-      event_id: '5',
-      event_name: 'event_5',
-      event_description: 'Description for e5',
-      event_date: DateTime.now(),
-      event_club_name: 'Club E',
-      event_admin_id: 'admin654',
-    ),
-  ];
 
   @override
   void initState() {
@@ -230,6 +192,9 @@ class _NavBarPageState extends State<NavBarPage> {
       'MyProfile': MyProfileWidget(),
     };
     final currentIndex = tabs.keys.toList().indexOf(_currentPageName);
+
+    final MediaQueryData queryData = MediaQuery.of(context);
+
     return Scaffold(
       body: _currentPage ?? tabs[_currentPageName],
       extendBody: true,

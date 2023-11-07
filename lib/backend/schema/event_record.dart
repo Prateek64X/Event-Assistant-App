@@ -61,6 +61,11 @@ class EventRecord extends FirestoreRecord {
   String get eventCommunityLink => _eventCommunityLink ?? '';
   bool hasEventCommunityLink() => _eventCommunityLink != null;
 
+  // "event_img" field.
+  String? _eventImg;
+  String get eventImg => _eventImg ?? '';
+  bool hasEventImg() => _eventImg != null;
+
   void _initializeFields() {
     _eventId = snapshotData['event_id'] as String?;
     _eventName = snapshotData['event_name'] as String?;
@@ -71,6 +76,7 @@ class EventRecord extends FirestoreRecord {
     _eventEndDate = snapshotData['event_end_date'] as DateTime?;
     _eventFormLink = snapshotData['event_form_link'] as String?;
     _eventCommunityLink = snapshotData['event_community_link'] as String?;
+    _eventImg = snapshotData['event_img'] as String?;
   }
 
   static CollectionReference get collection =>
@@ -116,6 +122,7 @@ Map<String, dynamic> createEventRecordData({
   DateTime? eventEndDate,
   String? eventFormLink,
   String? eventCommunityLink,
+  String? eventImg,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
@@ -128,6 +135,7 @@ Map<String, dynamic> createEventRecordData({
       'event_end_date': eventEndDate,
       'event_form_link': eventFormLink,
       'event_community_link': eventCommunityLink,
+      'event_img': eventImg,
     }.withoutNulls,
   );
 
@@ -147,7 +155,8 @@ class EventRecordDocumentEquality implements Equality<EventRecord> {
         e1?.eventAdminId == e2?.eventAdminId &&
         e1?.eventEndDate == e2?.eventEndDate &&
         e1?.eventFormLink == e2?.eventFormLink &&
-        e1?.eventCommunityLink == e2?.eventCommunityLink;
+        e1?.eventCommunityLink == e2?.eventCommunityLink &&
+        e1?.eventImg == e2?.eventImg;
   }
 
   @override
@@ -160,7 +169,8 @@ class EventRecordDocumentEquality implements Equality<EventRecord> {
         e?.eventAdminId,
         e?.eventEndDate,
         e?.eventFormLink,
-        e?.eventCommunityLink
+        e?.eventCommunityLink,
+        e?.eventImg
       ]);
 
   @override

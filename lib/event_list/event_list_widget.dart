@@ -1,4 +1,5 @@
 import 'package:event_assistant_app/components/create_event_new_widget.dart';
+import 'package:event_assistant_app/components/join_event_widget.dart';
 
 import '../backend/backend.dart';
 import '../backend/EventsDataLocal.dart';
@@ -138,8 +139,9 @@ class _EventListWidgetState extends State<EventListWidget> {
                   ),
                   Padding(
                     padding:
-                        EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                        EdgeInsetsDirectional.fromSTEB(16.0, 16.0, 16.0, 16.0),
                     child: Row(
+                      mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
@@ -154,8 +156,9 @@ class _EventListWidgetState extends State<EventListWidget> {
                             color: FlutterFlowTheme.of(context).accent1,
                             borderRadius: BorderRadius.circular(20.0),
                           ),
-                          width: 76.0, // adjust the width to prevent overflow
-                          child: IconButton(
+                          width: 88.0, // adjust the width to prevent overflow
+                          height: 36.0,
+                          child: ElevatedButton(
                             onPressed: () async {
                               // Show Create Event Component
                               await showModalBottomSheet(
@@ -182,27 +185,26 @@ class _EventListWidgetState extends State<EventListWidget> {
                                 },
                               ).then((value) => setState(() {}));
                             },
-                            icon: Row(
+                            child: Row(
                               children: [
                                 Icon(Icons.add),
                                 SizedBox(width: 4.0),
                                 Text(
                                   "Add",
                                   style: TextStyle(
-                                      color:
-                                          FlutterFlowTheme.of(context).accent2),
+                                    color: FlutterFlowTheme.of(context).accent2,
+                                  ),
                                 ),
                               ],
                             ),
-                            tooltip: "Add",
-                            color: FlutterFlowTheme.of(context).accent2,
-                            splashColor: FlutterFlowTheme.of(context).accent2,
-                            highlightColor:
-                                FlutterFlowTheme.of(context).secondary,
-                            padding: EdgeInsets.all(8.0),
-                            iconSize: 22.0,
-                            constraints: BoxConstraints(),
-                            disabledColor: Colors.grey,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  FlutterFlowTheme.of(context).accent1,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                              elevation: 2.0, // Remove the shadow
+                            ),
                           ),
                         ),
                       ],
@@ -258,18 +260,50 @@ class _EventListWidgetState extends State<EventListWidget> {
                                             : Colors.grey,
                                       ),
                                       SizedBox(width: 8.0),
+                                      Icon(
+                                        pinnedEventIds.contains(event.eventId)
+                                            ? Icons.mode_edit_outline_outlined
+                                            : Icons.mode_edit_outline_outlined,
+                                        color: pinnedEventIds
+                                            .contains(event.eventId)
+                                            ? Colors.blue
+                                            : Colors.grey,
+                                      ),
+                                      SizedBox(width: 8.0),
                                       ElevatedButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            if (pinnedEventIds
-                                                .contains(event.eventId)) {
-                                              pinnedEventIds
-                                                  .remove(event.eventId);
-                                            } else {
-                                              pinnedEventIds
-                                                  .add(event.eventId);
-                                            }
-                                          });
+                                        onPressed: () async {
+                                          print(
+                                              "Event List Widget :: eventId: ${event.toString()}");
+                                          // Show Join Event Component
+                                          await showModalBottomSheet(
+                                            isScrollControlled: true,
+                                            backgroundColor: Colors.transparent,
+                                            enableDrag: false,
+                                            useSafeArea: true,
+                                            context: context,
+                                            builder: (context) {
+                                              return GestureDetector(
+                                                onTap: () => _model.unfocusNode
+                                                        .canRequestFocus
+                                                    ? FocusScope.of(context)
+                                                        .requestFocus(
+                                                            _model.unfocusNode)
+                                                    : FocusScope.of(context)
+                                                        .unfocus(),
+                                                child: Padding(
+                                                  padding:
+                                                      MediaQuery.viewInsetsOf(
+                                                          context),
+                                                  child: Container(
+                                                    height: double.infinity,
+                                                    child: JoinEventWidget(
+                                                      eventId: event.reference.path,
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ).then((value) => setState(() {}));
                                         },
                                         child: Row(
                                           children: [
@@ -286,8 +320,9 @@ class _EventListWidgetState extends State<EventListWidget> {
                                           ],
                                         ),
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: FlutterFlowTheme.of(context)
-                                              .accent1,
+                                          backgroundColor:
+                                              FlutterFlowTheme.of(context)
+                                                  .accent1,
                                           shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(20.0),

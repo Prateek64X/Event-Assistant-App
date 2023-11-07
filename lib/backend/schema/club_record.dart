@@ -31,10 +31,16 @@ class ClubRecord extends FirestoreRecord {
   String get clubAdminId => _clubAdminId ?? '';
   bool hasClubAdminId() => _clubAdminId != null;
 
+  // "club_img" field.
+  String? _clubImg;
+  String get clubImg => _clubImg ?? '';
+  bool hasClubImg() => _clubImg != null;
+
   void _initializeFields() {
     _clubName = snapshotData['club_name'] as String?;
     _clubDescription = snapshotData['club_description'] as String?;
     _clubAdminId = snapshotData['club_admin_id'] as String?;
+    _clubImg = snapshotData['club_img'] as String?;
   }
 
   static CollectionReference get collection =>
@@ -74,12 +80,14 @@ Map<String, dynamic> createClubRecordData({
   String? clubName,
   String? clubDescription,
   String? clubAdminId,
+  String? clubImg,
 }) {
   final firestoreData = mapToFirestore(
     <String, dynamic>{
       'club_name': clubName,
       'club_description': clubDescription,
       'club_admin_id': clubAdminId,
+      'club_img': clubImg,
     }.withoutNulls,
   );
 
@@ -93,12 +101,13 @@ class ClubRecordDocumentEquality implements Equality<ClubRecord> {
   bool equals(ClubRecord? e1, ClubRecord? e2) {
     return e1?.clubName == e2?.clubName &&
         e1?.clubDescription == e2?.clubDescription &&
-        e1?.clubAdminId == e2?.clubAdminId;
+        e1?.clubAdminId == e2?.clubAdminId &&
+        e1?.clubImg == e2?.clubImg;
   }
 
   @override
   int hash(ClubRecord? e) => const ListEquality()
-      .hash([e?.clubName, e?.clubDescription, e?.clubAdminId]);
+      .hash([e?.clubName, e?.clubDescription, e?.clubAdminId, e?.clubImg]);
 
   @override
   bool isValidKey(Object? o) => o is ClubRecord;

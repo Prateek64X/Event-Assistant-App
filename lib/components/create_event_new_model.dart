@@ -1,10 +1,12 @@
 import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
+import '/backend/firebase_storage/storage.dart';
 import '/flutter_flow/flutter_flow_drop_down.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import '/flutter_flow/form_field_controller.dart';
+import '/flutter_flow/upload_data.dart';
 import 'dart:ui';
 import 'create_event_new_widget.dart' show CreateEventNewWidget;
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -51,7 +53,11 @@ class CreateEventNewModel extends FlutterFlowModel<CreateEventNewWidget> {
   FocusNode? eventCommunityLinkTextFieldFocusNode;
   TextEditingController? eventCommunityLinkTextFieldController;
   String? Function(BuildContext, String?)?
-  eventCommunityLinkTextFieldControllerValidator;
+      eventCommunityLinkTextFieldControllerValidator;
+  bool isDataUploading = false;
+  FFUploadedFile uploadedLocalFile =
+      FFUploadedFile(bytes: Uint8List.fromList([]));
+  String uploadedFileUrl = '';
 
   /// Initialization and disposal methods.
 
